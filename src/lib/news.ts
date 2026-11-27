@@ -1,4 +1,3 @@
-import { cacheLife } from "next/cache";
 import type { Article, Category, NewsPayload } from "@/lib/types";
 
 export type { Article, Category, NewsPayload } from "@/lib/types";
@@ -193,8 +192,6 @@ async function fetchFeed(feed: FeedConfig): Promise<Article[]> {
 }
 
 export async function getNews(): Promise<NewsPayload> {
-  "use cache";
-  cacheLife("hours");
   const results = await Promise.all(FEEDS.map(fetchFeed));
   const live = results.flat().sort((a, b) => {
     return (

@@ -1,23 +1,15 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
-import { startTransition } from "react";
 import { CATEGORIES, type Category } from "@/lib/types";
 
-export function CategoryFilter({ active }: { active: Category }) {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-
-  function select(id: Category) {
-    const params = new URLSearchParams(searchParams.toString());
-    if (id === "tat-ca") params.delete("c");
-    else params.set("c", id);
-    startTransition(() => {
-      const q = params.toString();
-      router.replace(q ? `?${q}#tin-moi` : "#tin-moi", { scroll: false });
-    });
-  }
-
+/** Kept for compatibility; filtering now lives in NewsSection. */
+export function CategoryFilter({
+  active,
+  onChange,
+}: {
+  active: Category;
+  onChange?: (id: Category) => void;
+}) {
   return (
     <div
       className="flex flex-wrap gap-2"
@@ -32,7 +24,7 @@ export function CategoryFilter({ active }: { active: Category }) {
             type="button"
             role="tab"
             aria-selected={isActive}
-            onClick={() => select(cat.id)}
+            onClick={() => onChange?.(cat.id)}
             className={
               isActive
                 ? "rounded-md bg-[var(--ink)] px-3.5 py-2 text-sm font-medium text-white transition"

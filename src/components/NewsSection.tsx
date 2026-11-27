@@ -1,28 +1,22 @@
-import { Suspense } from "react";
-import { CategoryFilter } from "@/components/CategoryFilter";
+"use client";
+
+import { useState } from "react";
 import { ArticleList } from "@/components/ArticleList";
-import { getNews } from "@/lib/news";
-import { filterArticles, type Category } from "@/lib/types";
+import {
+  CATEGORIES,
+  filterArticles,
+  type Article,
+  type Category,
+} from "@/lib/types";
 
-function isCategory(value: string | undefined): value is Category {
-  return (
-    value === "tat-ca" ||
-    value === "cong-nghe" ||
-    value === "khoa-hoc" ||
-    value === "ai" ||
-    value === "vu-tru"
-  );
-}
-
-export async function NewsSection({
-  categoryParam,
+export function NewsSection({
+  articles,
+  fromSample,
 }: {
-  categoryParam?: string;
+  articles: Article[];
+  fromSample: boolean;
 }) {
-  const category: Category = isCategory(categoryParam)
-    ? categoryParam
-    : "tat-ca";
-  const { articles, fromSample } = await getNews();
+  const [category, setCategory] = useState<Category>("tat-ca");
   const filtered = filterArticles(articles, category);
 
   return (
@@ -41,17 +35,35 @@ export async function NewsSection({
             </h2>
             <p className="mt-2 max-w-md text-[var(--ink-soft)]">
               {fromSample
-                ? "Đang hiển thị dữ liệu mẫu — nguồn RSS sẽ xuất hiện khi kết nối được."
+                ? "Đang hiển thị dữ liệu mẫu — nguồn RSS sẽ xuất hiện khi build lấy được feed."
                 : "Tổng hợp từ NASA, BBC Technology và BBC Science."}
             </p>
           </div>
-          <Suspense
-            fallback={
-              <div className="h-10 w-64 animate-pulse rounded-md bg-[var(--mist)]" />
-            }
+          <div
+            className="flex flex-wrap gap-2"
+            role="tablist"
+            aria-label="Lọc chuyên mục"
           >
-            <CategoryFilter active={category} />
-          </Suspense>
+            {CATEGORIES.map((cat) => {
+              const isActive = cat.id === category;
+              return (
+                <button
+                  key={cat.id}
+                  type="button"
+                  role="tab"
+                  aria-selected={isActive}
+                  onClick={() => setCategory(cat.id)}
+                  className={
+                    isActive
+                      ? "rounded-md bg-[var(--ink)] px-3.5 py-2 text-sm font-medium text-white transition"
+                      : "rounded-md px-3.5 py-2 text-sm font-medium text-[var(--ink-soft)] transition hover:bg-[var(--mist)]"
+                  }
+                >
+                  {cat.label}
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         <div className="mt-10">

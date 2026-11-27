@@ -1,9 +1,14 @@
 import type { NextConfig } from "next";
 
+const repoName = "Tin-tuc-KHCN";
+const isPages = process.env.GITHUB_PAGES === "1";
+
 const nextConfig: NextConfig = {
-  /* config options here */
-  cacheComponents: true,
-  partialPrefetching: true,
+  output: "export",
+  images: { unoptimized: true },
+  trailingSlash: true,
+  basePath: isPages ? `/${repoName}` : undefined,
+  assetPrefix: isPages ? `/${repoName}/` : undefined,
   turbopack: {
     rules: {
       "*.css": {
